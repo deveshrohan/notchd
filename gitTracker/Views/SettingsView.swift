@@ -115,7 +115,7 @@ struct SettingsView: View {
             Button(role: .destructive) {
                 NSApp.terminate(nil)
             } label: {
-                Label("Quit gitTracker", systemImage: "power")
+                Label("Quit Notchd", systemImage: "power")
                     .font(.system(size: 12))
                     .foregroundStyle(Color.red.opacity(0.75))
             }

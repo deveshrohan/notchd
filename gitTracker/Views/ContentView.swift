@@ -3,9 +3,9 @@ import AppKit
 
 struct ContentView: View {
     @ObservedObject var contributionVM = ContributionViewModel.shared
+    @ObservedObject var panelState     = PanelState.shared
     @StateObject var settingsVM = SettingsViewModel()
     @State private var showingSettings = false
-    @State private var appeared = false
 
     private var notchInset: CGFloat { NotchPositionDetector.notchHeight }
 
@@ -31,35 +31,31 @@ struct ContentView: View {
         }
         .frame(width: 370)
         .fixedSize(horizontal: true, vertical: true)
-        .offset(y: appeared ? 0 : -(notchInset + 8))
-        .opacity(appeared ? 1 : 0)
+        // Expand from the notch on open, collapse back on close
+        .scaleEffect(
+            x: panelState.isOpen ? 1.0 : 0.88,
+            y: panelState.isOpen ? 1.0 : 0.0,
+            anchor: UnitPoint(x: 0.5, y: 0)
+        )
+        .opacity(panelState.isOpen ? 1.0 : 0.0)
+        .animation(
+            .spring(response: 0.38, dampingFraction: 0.72),
+            value: panelState.isOpen
+        )
         .onAppear {
-            withAnimation(AnimationConstants.panelSpring) { appeared = true }
             if settingsVM.hasCredentials && contributionVM.weeks.isEmpty {
                 contributionVM.fetchContributions()
             }
         }
     }
 
-    // MARK: - Background
-    // Single shape fill — no stroke overlay, no mask trick that causes double-border artifacts.
-    // Soft separation comes entirely from the directional shadow.
+    // MARK: - Background — pitch black at top to merge with the notch
     private var panelBackground: some View {
         UnevenRoundedRectangle(
             topLeadingRadius: 0, bottomLeadingRadius: 14,
             bottomTrailingRadius: 14, topTrailingRadius: 0,
             style: .continuous
         )
-        .fill(
-            LinearGradient(
-                stops: [
-                    .init(color: Color(red: 0.03, green: 0.03, blue: 0.04), location: 0.00),
-                    .init(color: ColorPalette.background,                   location: 0.22),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-        )
-        // Shadow is handled by NSPanel's hasShadow — no SwiftUI shadow to avoid edge artifacts
+        .fill(Color.black)
     }
 }

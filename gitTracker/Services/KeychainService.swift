@@ -2,7 +2,7 @@ import Foundation
 import Security
 
 enum KeychainService {
-    private static let service = "com.devesh.gitTracker"
+    private static let service = "com.devesh.notchd"
     private static let account = "githubPAT"
 
     static func save(token: String) {

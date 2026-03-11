@@ -38,17 +38,13 @@ final class NotchPanelController {
 
     func show() {
         guard !isVisible else { return }
-        // Bump ID so ContributionGridView recreates and re-runs its entrance animation
         ContributionViewModel.shared.displayRevisionID = UUID()
         positionPanel()
-        panel.alphaValue = 0
+        panel.alphaValue = 1
         panel.orderFrontRegardless()
         isVisible = true
-        NSAnimationContext.runAnimationGroup { ctx in
-            ctx.duration = 0.22
-            ctx.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            panel.animator().alphaValue = 1
-        }
+        // SwiftUI spring handles the visual expand-from-notch animation
+        PanelState.shared.isOpen = true
         installGlobalMonitor()
     }
 
@@ -56,14 +52,12 @@ final class NotchPanelController {
         guard isVisible else { return }
         isVisible = false
         removeGlobalMonitor()
-        NSAnimationContext.runAnimationGroup { ctx in
-            ctx.duration = 0.15
-            ctx.timingFunction = CAMediaTimingFunction(name: .easeIn)
-            panel.animator().alphaValue = 0
-        } completionHandler: { [weak self] in
-            Task { @MainActor [weak self] in
-                self?.panel.orderOut(nil)
-            }
+        // Trigger SwiftUI collapse-to-notch animation, then remove window
+        PanelState.shared.isOpen = false
+        Task { @MainActor [weak self] in
+            // Wait for spring to settle (~0.38s response + damping)
+            try? await Task.sleep(for: .milliseconds(420))
+            self?.panel.orderOut(nil)
         }
     }
 

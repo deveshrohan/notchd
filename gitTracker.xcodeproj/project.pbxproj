@@ -13,6 +13,7 @@
 		A982CC288E7948B3A461B0F0 = {isa = PBXBuildFile; fileRef = CF91949DB92145B49879E285 /* NotchPanelController.swift */; };
 		A0F8A61D682E40DD99E1F856 = {isa = PBXBuildFile; fileRef = E441AAEFF2414D5BBD405DD4 /* NotchPositionDetector.swift */; };
 		60109AF0B10E4574AE368850 = {isa = PBXBuildFile; fileRef = 95CCAD13BEDA4A12B8B5561D /* StreakNudgeController.swift */; };
+		AB12CD34EF5678901234ABCD = {isa = PBXBuildFile; fileRef = BC23DE45F0678901234BCDE0 /* PanelState.swift */; };
 		D9849E609C8E41FA93351D1B = {isa = PBXBuildFile; fileRef = 270EF3AFB1C04F68A5632D46 /* ContentView.swift */; };
 		470A9FCC9793402FBB5CF736 = {isa = PBXBuildFile; fileRef = 3524672341A24BD18B0B2BE9 /* ContributionPanelView.swift */; };
 		79F855FE3F6C44939F517D25 = {isa = PBXBuildFile; fileRef = 95CF6CD939DD41FE964B64EF /* ContributionGridView.swift */; };
@@ -43,6 +44,7 @@
 		CF91949DB92145B49879E285 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPanelController.swift; sourceTree = "<group>"; };
 		E441AAEFF2414D5BBD405DD4 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotchPositionDetector.swift; sourceTree = "<group>"; };
 		95CCAD13BEDA4A12B8B5561D = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakNudgeController.swift; sourceTree = "<group>"; };
+		BC23DE45F0678901234BCDE0 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelState.swift; sourceTree = "<group>"; };
 		270EF3AFB1C04F68A5632D46 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		3524672341A24BD18B0B2BE9 = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContributionPanelView.swift; sourceTree = "<group>"; };
 		95CF6CD939DD41FE964B64EF = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContributionGridView.swift; sourceTree = "<group>"; };
@@ -101,6 +103,7 @@
 			CF91949DB92145B49879E285 /* NotchPanelController.swift */,
 			E441AAEFF2414D5BBD405DD4 /* NotchPositionDetector.swift */,
 			95CCAD13BEDA4A12B8B5561D /* StreakNudgeController.swift */,
+			BC23DE45F0678901234BCDE0 /* PanelState.swift */,
 		); name = Window; path = Window; sourceTree = "<group>"; };
 		6EDDA8610B694EEE983DAB0A = {isa = PBXGroup; children = (
 			270EF3AFB1C04F68A5632D46 /* ContentView.swift */,
@@ -162,6 +165,7 @@
 			A982CC288E7948B3A461B0F0 /* NotchPanelController.swift */,
 			A0F8A61D682E40DD99E1F856 /* NotchPositionDetector.swift */,
 			60109AF0B10E4574AE368850 /* StreakNudgeController.swift */,
+			AB12CD34EF5678901234ABCD /* PanelState.swift */,
 			D9849E609C8E41FA93351D1B /* ContentView.swift */,
 			470A9FCC9793402FBB5CF736 /* ContributionPanelView.swift */,
 			79F855FE3F6C44939F517D25 /* ContributionGridView.swift */,
@@ -207,7 +211,7 @@
 				COMBINE_HIDPI_IMAGES = YES; DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "gitTracker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
-				MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_BUNDLE_IDENTIFIER = "com.devesh.gitTracker";
+				MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_BUNDLE_IDENTIFIER = "com.devesh.notchd";
 				PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
@@ -218,7 +222,7 @@
 				COMBINE_HIDPI_IMAGES = YES; DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "gitTracker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/../Frameworks");
-				MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_BUNDLE_IDENTIFIER = "com.devesh.gitTracker";
+				MACOSX_DEPLOYMENT_TARGET = 13.0; PRODUCT_BUNDLE_IDENTIFIER = "com.devesh.notchd";
 				PRODUCT_NAME = "$(TARGET_NAME)"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 6.0;
 			};
 			name = Release;
