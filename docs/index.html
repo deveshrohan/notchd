@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>gitTracker — GitHub contributions in your Mac notch</title>
+  <meta name="description" content="A sleek macOS menu bar app that displays your GitHub contribution graph as a notch overlay with streak tracking and Lottie flame animations." />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --green: #26a641;
+      --green-light: #39d353;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(12px);
+      z-index: 10;
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--green-light); }
+    nav a.btn-nav {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: border-color .2s, background .2s;
+    }
+    nav a.btn-nav:hover { border-color: var(--green); background: rgba(38,166,65,.08); }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 100px 24px 80px;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(38,166,65,.12);
+      color: var(--green-light);
+      border: 1px solid rgba(57,211,83,.25);
+      border-radius: 999px;
+      padding: 4px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    h1 {
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      margin-bottom: 20px;
+    }
+    h1 em { font-style: normal; color: var(--green-light); }
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 540px;
+      margin: 0 auto 40px;
+    }
+    .cta-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn:hover { opacity: .88; transform: translateY(-1px); }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+
+    /* MOCKUP */
+    .mockup-wrap {
+      max-width: 700px;
+      margin: 0 auto 80px;
+      padding: 0 24px;
+    }
+    .mockup {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 28px 20px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+    }
+    .notch-bar {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+    .notch-pill {
+      background: #000;
+      border-radius: 999px;
+      width: 120px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .grid-preview {
+      display: flex;
+      gap: 3px;
+      margin-top: 16px;
+      overflow: hidden;
+    }
+    .grid-col { display: flex; flex-direction: column; gap: 3px; }
+    .cell {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+    .l0 { background: #161b22; border: 1px solid #30363d; }
+    .l1 { background: #0e4429; }
+    .l2 { background: #006d32; }
+    .l3 { background: #26a641; }
+    .l4 { background: #39d353; }
+
+    /* FEATURES */
+    .features {
+      max-width: 960px;
+      margin: 0 auto 100px;
+      padding: 0 24px;
+    }
+    .section-label {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--green); }
+    .card-icon { font-size: 28px; margin-bottom: 14px; }
+    .card h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+    .card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* HOW IT WORKS */
+    .steps {
+      max-width: 640px;
+      margin: 0 auto 100px;
+      padding: 0 24px;
+      text-align: center;
+    }
+    .steps h2 { font-size: 30px; font-weight: 700; margin-bottom: 48px; }
+    .step-list { text-align: left; display: flex; flex-direction: column; gap: 24px; }
+    .step {
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(38,166,65,.15);
+      border: 1px solid var(--green);
+      color: var(--green-light);
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .step-body h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+    .step-body p { font-size: 13px; color: var(--muted); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 36px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+
+    @media (max-width: 600px) {
+      nav { padding: 16px 20px; }
+      footer { padding: 24px 20px; flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">🔥 <span>git</span>Tracker</a>
+  <a class="btn-nav" href="https://github.com/deveshrohan/gitTracker">View on GitHub →</a>
+</nav>
+
+<section class="hero">
+  <div class="badge">macOS Menu Bar App</div>
+  <h1>Your GitHub streak,<br>living in the <em>notch</em></h1>
+  <p>gitTracker sits silently in your menu bar and pops open a contribution graph right from the Dynamic Island — just hover over it.</p>
+  <div class="cta-group">
+    <a class="btn btn-primary" href="https://github.com/deveshrohan/gitTracker/releases/latest">
+      ⬇ Download DMG
+    </a>
+    <a class="btn btn-secondary" href="https://github.com/deveshrohan/gitTracker">
+      ★ Star on GitHub
+    </a>
+  </div>
+</section>
+
+<div class="mockup-wrap">
+  <div class="mockup">
+    <div class="notch-bar">
+      <div class="notch-pill"></div>
+    </div>
+    <div style="margin-top:14px; display:flex; align-items:center; gap:10px;">
+      <div style="width:32px;height:32px;border-radius:50%;background:#21262d;display:flex;align-items:center;justify-content:center;font-size:14px;">👤</div>
+      <div>
+        <div style="font-size:13px;font-weight:600;">@deveshrohan</div>
+        <div style="font-size:11px;color:var(--muted);">1,247 contributions this year</div>
+      </div>
+      <div style="margin-left:auto;font-size:22px;">🔥</div>
+      <div style="font-size:12px;font-weight:600;color:var(--green-light);">42-day streak</div>
+    </div>
+    <div class="grid-preview">
+      <!-- Generate fake contribution columns -->
+      <script>
+        const levels = ['l0','l1','l2','l3','l4'];
+        const weights = [0.3,0.25,0.2,0.15,0.1];
+        function randLevel() {
+          const r = Math.random();
+          let acc = 0;
+          for (let i = 0; i < weights.length; i++) {
+            acc += weights[i];
+            if (r < acc) return levels[i];
+          }
+          return levels[0];
+        }
+        const container = document.currentScript.parentElement;
+        for (let w = 0; w < 52; w++) {
+          const col = document.createElement('div');
+          col.className = 'grid-col';
+          for (let d = 0; d < 7; d++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell ' + randLevel();
+            col.appendChild(cell);
+          }
+          container.appendChild(col);
+        }
+      </script>
+    </div>
+    <div style="display:flex;gap:4px;align-items:center;margin-top:12px;padding-left:2px;">
+      <span style="font-size:9px;color:var(--muted);">Less</span>
+      <div class="cell l0"></div><div class="cell l1"></div><div class="cell l2"></div><div class="cell l3"></div><div class="cell l4"></div>
+      <span style="font-size:9px;color:var(--muted);">More</span>
+    </div>
+  </div>
+</div>
+
+<section class="features">
+  <p class="section-label">Features</p>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🖥</div>
+      <h3>Notch-native overlay</h3>
+      <p>The panel extends behind the MacBook notch, merging seamlessly with the Dynamic Island aesthetic.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🖱</div>
+      <h3>Hover to open</h3>
+      <p>Move your cursor near the notch and the panel glides open. Move away and it dismisses — no clicks needed.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔥</div>
+      <h3>Animated streak flame</h3>
+      <p>Lottie-powered fire animation that scales in intensity with your streak — from a flicker at 1 day to a roaring flame at 30+.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">✦</div>
+      <h3>Grid entrance animation</h3>
+      <p>Contribution cells pop in randomly on open with an ongoing blink effect — satisfying every single time.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔒</div>
+      <h3>Keychain-secured token</h3>
+      <p>Your GitHub PAT is stored in macOS Keychain — never in plaintext, never leaves your machine.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>Lightweight</h3>
+      <p>2.4 MB DMG. No background agents. No telemetry. Sandboxed with minimal permissions.</p>
+    </div>
+  </div>
+</section>
+
+<section class="steps">
+  <h2>Get started in 3 steps</h2>
+  <div class="step-list">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Download &amp; install</h4>
+        <p>Open the DMG and drag gitTracker.app to your Applications folder.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Add your credentials</h4>
+        <p>Click the menu bar icon → gear icon → enter your GitHub username and a Personal Access Token with <code style="background:#21262d;padding:1px 5px;border-radius:4px;font-size:12px;">read:user</code> scope.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Hover the notch</h4>
+        <p>Move your cursor toward the Dynamic Island — your contribution graph appears instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Built by <a href="https://github.com/deveshrohan">@deveshrohan</a></span>
+  <span>
+    <a href="https://github.com/deveshrohan/gitTracker">GitHub</a> ·
+    <a href="https://github.com/deveshrohan/gitTracker/issues">Issues</a> ·
+    <a href="https://github.com/deveshrohan/gitTracker/releases">Releases</a>
+  </span>
+</footer>
+
+</body>
+</html>

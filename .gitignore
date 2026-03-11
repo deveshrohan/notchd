@@ -1,0 +1,21 @@
+# Build
+build/
+DerivedData/
+*.xcuserstate
+
+# Xcode user data
+xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# SPM resolved (let Xcode re-resolve)
+# Keep Package.resolved for reproducible builds — not applicable here
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Archives
+*.dmg
+*.pkg
