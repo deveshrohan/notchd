@@ -31,10 +31,12 @@ struct ContentView: View {
         }
         .frame(width: 370)
         .fixedSize(horizontal: true, vertical: true)
-        // Expand from the notch on open, collapse back on close
+        // Slide from notch on open, slide back on close.
+        // Never use scaleEffect(y: 0) — zero Y scale is non-invertible and crashes ScrollView.
+        .offset(y: panelState.isOpen ? 0 : -(notchInset + 10))
         .scaleEffect(
-            x: panelState.isOpen ? 1.0 : 0.88,
-            y: panelState.isOpen ? 1.0 : 0.0,
+            x: panelState.isOpen ? 1.0 : 0.92,
+            y: panelState.isOpen ? 1.0 : 0.82,
             anchor: UnitPoint(x: 0.5, y: 0)
         )
         .opacity(panelState.isOpen ? 1.0 : 0.0)
