@@ -12,11 +12,15 @@ enum KeychainService {
             kSecAttrService: service,
             kSecAttrAccount: account,
         ]
-        let attributes: [CFString: Any] = [kSecValueData: data]
+        let attributes: [CFString: Any] = [
+            kSecValueData:       data,
+            kSecAttrAccessible:  kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+        ]
         let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
         if status == errSecItemNotFound {
             var addQuery = query
             addQuery[kSecValueData] = data
+            addQuery[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
             SecItemAdd(addQuery as CFDictionary, nil)
         }
     }
