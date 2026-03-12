@@ -1,4 +1,5 @@
 import SwiftUI
+import ServiceManagement
 
 struct SettingsView: View {
     @ObservedObject var vm: SettingsViewModel
@@ -6,6 +7,7 @@ struct SettingsView: View {
 
     @State private var showToken = false
     @State private var saved = false
+    @State private var launchAtLogin = (SMAppService.mainApp.status == .enabled)
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -111,6 +113,25 @@ struct SettingsView: View {
 
             Divider()
                 .background(ColorPalette.border)
+
+            Toggle(isOn: $launchAtLogin) {
+                Label("Launch at Login", systemImage: "power.circle")
+                    .font(.system(size: 12))
+                    .foregroundStyle(ColorPalette.textPrimary)
+            }
+            .toggleStyle(.switch)
+            .controlSize(.small)
+            .onChange(of: launchAtLogin) { enabled in
+                do {
+                    if enabled {
+                        try SMAppService.mainApp.register()
+                    } else {
+                        try SMAppService.mainApp.unregister()
+                    }
+                } catch {
+                    launchAtLogin = !enabled // revert on failure
+                }
+            }
 
             Button(role: .destructive) {
                 NSApp.terminate(nil)

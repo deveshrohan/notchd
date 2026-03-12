@@ -4,39 +4,54 @@ import SwiftUI
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
+    private var fallbackMenu: NSMenu!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // No Dock icon
         NSApp.setActivationPolicy(.accessory)
 
-        // Create menu bar status item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
             button.image = NSImage(systemSymbolName: "square.grid.3x3.fill",
-                                   accessibilityDescription: "gitTracker")
+                                   accessibilityDescription: "Notchd")
             button.image?.isTemplate = true
             button.target = self
             button.action = #selector(statusButtonClicked(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
 
-        // Initialize the shared controllers
+        // Right-click fallback menu
+        fallbackMenu = NSMenu()
+        fallbackMenu.addItem(withTitle: "Open Notchd",    action: #selector(openPanel),                        keyEquivalent: "")
+        fallbackMenu.addItem(.separator())
+        fallbackMenu.addItem(withTitle: "Quit Notchd",    action: #selector(NSApplication.terminate(_:)),      keyEquivalent: "q")
+        fallbackMenu.items.forEach { $0.target = self }
+
         _ = NotchPanelController.shared
         _ = StreakNudgeController.shared
-
-        // Show streak nudge once data is available
         observeContributionsForNudge()
     }
 
-    private var nudgeObserver: NSObjectProtocol?
+    @objc private func openPanel() {
+        NotchPanelController.shared.show()
+    }
+
+    @objc private func statusButtonClicked(_ sender: NSStatusBarButton) {
+        let event = NSApp.currentEvent
+        if event?.type == .rightMouseUp {
+            statusItem.menu = fallbackMenu
+            statusItem.button?.performClick(nil)
+            // Clear menu so left-click still calls action directly
+            DispatchQueue.main.async { self.statusItem.menu = nil }
+        } else {
+            NotchPanelController.shared.toggle()
+        }
+    }
 
     private func observeContributionsForNudge() {
-        // Poll until data is loaded, then evaluate nudge (max ~10s)
         var attempts = 0
         func check() {
             let vm = ContributionViewModel.shared
             if !vm.weeks.isEmpty {
-                // Small delay so the user settles in before the nudge appears
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                     StreakNudgeController.shared.showIfNeeded()
                 }
@@ -46,9 +61,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: check)
-    }
-
-    @objc private func statusButtonClicked(_ sender: NSStatusBarButton) {
-        NotchPanelController.shared.toggle()
     }
 }
